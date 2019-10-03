@@ -5,56 +5,60 @@ module Components
     def initialize(file)
       @file = file
       @people = []
-      @locations = []
-      @affiliations = []
     end
 
     def parse
-      affiliations = []
-      locations = []
-
       CSV.foreach(@file.path, headers: true) do |row|
-        data = row.to_h
-
-        @people << build_person(data)
-        affiliations << build_list(data["Affiliations"])
-        locations << build_list(data["Location"])
+        @people << build_person(row.to_h)
       end
-
-      cleanup_list(affiliations).each do |affiliation|
-        @affiliations << Affiliation.new(name: affiliation)
-      end
-
-      cleanup_list(locations).each do |location|
-        @locations << Location.new(name: location)
-      end
-
-      byebug
     end
 
     def import!
-      #ActiveRecord::Base.transaction do
-        imported_locations = Location.import(@locations)
-        imported_affiliations = Affiliation.import(@affiliations)
-        byebug
-      #end
+      ActiveRecord::Base.transaction do
+        @people.each do |person|
+          person.locations = person.locations.map do |location|
+            Location.find_or_initialize_by(name: location.name)
+          end
+
+          person.affiliations = person.affiliations.map do |affiliation|
+            Affiliation.find_or_initialize_by(name: affiliation.name)
+          end
+
+          person.save
+        end
+      end
     end
 
     private
 
-    def build_person(data)
-      name = data["Name"].split(" ", 2)
-      species = data["Species"]
-      gender = data["Gender"]
-      weapon = data["Weapon"]
-      vehicle = data["Vehicle"]
+    def build_person(row)
+      name = row["Name"].split(" ", 2)
 
-      {
-        first_name: name[0], last_name: name[1], gender: gender,
-        species: species, weapon: weapon, vehicle: vehicle,
-        locations: cleanup_list(build_list(data["Location"])),
-        affiliations: cleanup_list(build_list(data["Affiliations"]))
-      }
+      person = Person.new(
+        first_name: name[0], last_name: name[1], gender: row["Gender"],
+        species: row["Species"], weapon: row["Weapon"], vehicle: row["Vehicle"],
+      )
+
+      cleanup_list(build_list(row["Location"])).each do |location|
+        person.locations << Location.new(name: location)
+      end
+
+      return person if row["Affiliations"].nil?
+
+      cleanup_list(build_list(row["Affiliations"])).each do |affiliation|
+        person.affiliations << Affiliation.new(name: affiliation)
+      end
+
+      person
+    end
+
+    def build_affiliations(person, row)
+      return if row["Affiliations"].nil?
+
+      person.affiliations.build(
+        cleanup_list(build_list(row["Affiliations"]))
+          .map { |location| { name: location } }
+      )
     end
 
     def build_list(data)

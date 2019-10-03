@@ -3,8 +3,9 @@ class ImportController < ApplicationController
   end
 
   def import
-    data = Components::Uploader.new(params[:file]).parse
-    #data.import!
+    uploader = Components::Uploader.new(params[:file])
+    uploader.parse
+    uploader.import!
 
     redirect_to root_url, notice: "Successfully Imported Data!"
   end

@@ -3,4 +3,5 @@ class Affiliation < ApplicationRecord
   has_many :people, through: :affiliations_people
 
   validates :name, presence: true
+  validates_uniqueness_of :name
 end

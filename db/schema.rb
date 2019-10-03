@@ -12,13 +12,16 @@
 
 ActiveRecord::Schema.define(version: 2019_10_02_124440) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "affiliations", force: :cascade do |t|
     t.string "name"
   end
 
   create_table "affiliations_people", id: false, force: :cascade do |t|
-    t.integer "person_id", null: false
-    t.integer "affiliation_id", null: false
+    t.bigint "person_id", null: false
+    t.bigint "affiliation_id", null: false
     t.index ["person_id", "affiliation_id"], name: "index_affiliations_people_on_person_id_and_affiliation_id"
   end
 
@@ -27,8 +30,8 @@ ActiveRecord::Schema.define(version: 2019_10_02_124440) do
   end
 
   create_table "locations_people", id: false, force: :cascade do |t|
-    t.integer "person_id", null: false
-    t.integer "location_id", null: false
+    t.bigint "person_id", null: false
+    t.bigint "location_id", null: false
     t.index ["person_id", "location_id"], name: "index_locations_people_on_person_id_and_location_id"
   end
 
