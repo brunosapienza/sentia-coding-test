@@ -36,8 +36,12 @@ module Components
       name = row["Name"].split(" ", 2)
 
       person = Person.new(
-        first_name: name[0], last_name: name[1], gender: row["Gender"],
-        species: row["Species"], weapon: row["Weapon"], vehicle: row["Vehicle"],
+        first_name: sanitise(name[0]),
+        last_name: sanitise(name[1]),
+        gender: sanitise(row["Gender"]),
+        species: sanitise(row["Species"]),
+        weapon: sanitise(row["Weapon"]),
+        vehicle: sanitise(row["Vehicle"]),
       )
 
       cleanup_list(build_list(row["Location"])).each do |location|
@@ -72,6 +76,10 @@ module Components
         .map(&:downcase)
         .uniq
         .map(&:titlecase)
+    end
+
+    def sanitise(string)
+      string.try(:tr, "^A-Za-z0-9", " ").try(:rstrip)
     end
   end
 end

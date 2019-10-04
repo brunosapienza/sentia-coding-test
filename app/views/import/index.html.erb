@@ -5,3 +5,35 @@
   <%= file_field_tag :file %>
   <%= submit_tag "Import" %>
 <% end %>
+
+<table class="table table-striped" data-sort-name="name" data-sort-order="desc">
+  <thead>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Gender</th>
+      <th>Species</th>
+      <th>Weapon</th>
+      <th>Affiliations</th>
+      <th>Locations</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @people.each do |p| %>
+      <tr>
+        <td><%= p.first_name %></td>
+        <td><%= p.last_name %></td>
+        <td><%= p.gender %></td>
+        <td><%= p.species %></td>
+        <td><%= p.weapon %></td>
+        <td>
+          <%= p.affiliations.map(&:name).join(", ") %>
+        </td>
+        <td>
+          <%= p.locations.map(&:name).join(", ") %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
