@@ -1,9 +1,12 @@
 class ImportController < ApplicationController
   def index
     # HEADS UP!! this is bad performance, I would never perform a select all query and paginate on the fron-end.
-    # In a real world scenario, I would paginate this with a gem like Kaminari. For the sake of simplicty, and a feasible time to
+    # In a real world scenario, I would paginate this with a gem like Kaminari and built a custom JS compoment with React&Bootstrap
+    # to perform a search & sorting respecting the pagination.
+
+    # That said, the challenge description mentions it can be done in 1 hour, for the sake of simplicty, and a feasible time to
     # wrap up the front-end requirements, I'm using bootstrap-table to add functionalities such sorting and search and it's not
-    # compatible with db pagination. 
+    # compatible with db pagination hence, a select all here.
     @people = Person.all
   end
 
