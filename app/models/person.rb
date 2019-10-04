@@ -9,6 +9,4 @@ class Person < ApplicationRecord
   validates :gender, presence: true
   validates :species, presence: true
   validates_uniqueness_of :first_name
-
-  #paginates_per 10
 end

@@ -2,6 +2,8 @@ module Components
   class Uploader
     require 'csv'
 
+    attr_reader :people
+
     def initialize(file)
       @file = file
       @people = []
@@ -12,6 +14,8 @@ module Components
         next if row["Affiliations"].nil?
         @people << build_person(row.to_h)
       end
+
+      @people
     end
 
     def import!
@@ -33,7 +37,7 @@ module Components
     private
 
     def build_person(row)
-      name = row["Name"].split(" ", 2)
+      name = row["Name"].split(" ", 2).map(&:downcase).map(&:titlecase)
       gender = normalise_gender(row["Gender"])
 
       person = Person.new(
