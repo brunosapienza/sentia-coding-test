@@ -9,6 +9,7 @@ module Components
 
     def parse
       CSV.foreach(@file.path, headers: true) do |row|
+        next if row["Affiliations"].nil?
         @people << build_person(row.to_h)
       end
     end
@@ -43,8 +44,6 @@ module Components
         person.locations << Location.new(name: location)
       end
 
-      return person if row["Affiliations"].nil?
-
       cleanup_list(build_list(row["Affiliations"])).each do |affiliation|
         person.affiliations << Affiliation.new(name: affiliation)
       end
@@ -53,8 +52,6 @@ module Components
     end
 
     def build_affiliations(person, row)
-      return if row["Affiliations"].nil?
-
       person.affiliations.build(
         cleanup_list(build_list(row["Affiliations"]))
           .map { |location| { name: location } }
