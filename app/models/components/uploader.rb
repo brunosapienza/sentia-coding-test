@@ -34,11 +34,12 @@ module Components
 
     def build_person(row)
       name = row["Name"].split(" ", 2)
+      gender = normalise_gender(row["Gender"])
 
       person = Person.new(
         first_name: sanitise(name[0]),
         last_name: sanitise(name[1]),
-        gender: sanitise(row["Gender"]),
+        gender: gender,
         species: sanitise(row["Species"]),
         weapon: sanitise(row["Weapon"]),
         vehicle: sanitise(row["Vehicle"]),
@@ -53,6 +54,17 @@ module Components
       end
 
       person
+    end
+
+    def normalise_gender(gender)
+      gender_dictionary = {
+        "male" => "Male",
+        "m" => "Male",
+        "female" => "Female",
+        "f" => "Female",
+      }
+
+      gender_dictionary[sanitise(gender.downcase)] || gender
     end
 
     def build_affiliations(person, row)
