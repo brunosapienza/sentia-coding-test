@@ -10,5 +10,5 @@ class Person < ApplicationRecord
   validates :species, presence: true
   validates_uniqueness_of :first_name
 
-  paginates_per 5
+  #paginates_per 10
 end
