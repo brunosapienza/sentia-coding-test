@@ -76,6 +76,7 @@ module Components
         .map(&:downcase)
         .uniq
         .map(&:titlecase)
+        .map { |entry| sanitise(entry) }
     end
 
     def sanitise(string)
